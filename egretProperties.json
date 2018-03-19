@@ -1,0 +1,34 @@
+{
+  "engineVersion": "5.1.7",
+  "compilerVersion": "5.1.7",
+  "template": {},
+  "target": {
+    "current": "web"
+  },
+  "modules": [
+    {
+      "name": "egret"
+    },
+    {
+      "name": "game"
+    },
+    {
+      "name": "tween"
+    },
+    {
+      "name": "assetsmanager"
+    },
+    {
+      "name": "dragonBones"
+    },
+    {
+      "name": "socket"
+    },
+    {
+      "name": "egret-facebook"
+    },
+    {
+      "name": "promise"
+    }
+  ]
+}
