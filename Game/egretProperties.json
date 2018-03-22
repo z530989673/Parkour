@@ -19,6 +19,9 @@
       "name": "assetsmanager"
     },
     {
+      "name": "eui"
+    },
+    {
       "name": "dragonBones"
     },
     {
@@ -28,7 +31,14 @@
       "name": "egret-facebook"
     },
     {
+      "name": "experimental"
+    },
+    {
       "name": "promise"
+    },
+    {
+      "name": "physics",
+      "path": "../3rd/physics/libsrc"
     }
   ]
 }
