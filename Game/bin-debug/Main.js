@@ -1,3 +1,13 @@
+var __reflect = (this && this.__reflect) || function (p, c, t) {
+    p.__class__ = c, t ? t.push(c) : t = [c], p.__types__ = p.__types__ ? t.concat(p.__types__) : t;
+};
+var __extends = this && this.__extends || function __extends(t, e) { 
+ function r() { 
+ this.constructor = t;
+}
+for (var i in e) e.hasOwnProperty(i) && (t[i] = e[i]);
+r.prototype = e.prototype, t.prototype = new r();
+};
 //////////////////////////////////////////////////////////////////////////////////////
 //
 //  Copyright (c) 2014-present, Egret Technology.
@@ -26,86 +36,80 @@
 //  EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //
 //////////////////////////////////////////////////////////////////////////////////////
-var __reflect = (this && this.__reflect) || function (p, c, t) {
-    p.__class__ = c, t ? t.push(c) : t = [c], p.__types__ = p.__types__ ? t.concat(p.__types__) : t;
-};
-var __extends = this && this.__extends || function __extends(t, e) { 
- function r() { 
- this.constructor = t;
-}
-for (var i in e) e.hasOwnProperty(i) && (t[i] = e[i]);
-r.prototype = e.prototype, t.prototype = new r();
-};
 var Main = (function (_super) {
     __extends(Main, _super);
     function Main() {
         var _this = _super.call(this) || this;
-        _this.addEventListener(egret.Event.ADDED_TO_STAGE, _this.onAddToStage, _this);
+        _this.types = ["box", "circle"];
+        _this.once(egret.Event.ADDED_TO_STAGE, _this.onAddToStage, _this);
         return _this;
     }
-    Main.prototype.onAddToStage = function (event) {
-        var factor = 50;
-        var sh = (egret.MainContext.instance.stage.stageHeight) / factor;
-        var sw = (egret.MainContext.instance.stage.stageWidth) / factor;
-        //创建world
-        var world = new p2.World();
-        world.sleepMode = p2.World.BODY_SLEEPING;
-        //创建地面       
-        var gshape = new p2.Plane();
-        var gbody = new p2.Body({
-            position: [0, -sh / 2]
-        });
-        gbody.addShape(gshape);
-        world.addBody(gbody);
-        //添加显示对象   
-        var ground = this.createGround();
-        gbody.displays = [ground];
-        this.addChild(ground);
-        //添加长方形刚体
-        var boxShape = new p2.Box({ x: 2, y: 1 });
-        var boxBody = new p2.Body({ mass: 1, position: [sw / 2, 0], angularVelocity: 3 });
-        boxBody.addShape(boxShape);
-        world.addBody(boxBody);
-        //添加长方形刚体的显示对象   
-        var display = this.createSprite();
-        display.width = boxShape.width * factor;
-        display.height = boxShape.height * factor;
-        display.anchorOffsetX = display.width / 2;
-        display.anchorOffsetY = display.height / 2;
-        //同步egret对象和p2对象
-        boxBody.displays = [display];
-        this.addChild(display);
-        //添加帧事件侦听
-        egret.Ticker.getInstance().register(function (dt) {
-            //使世界时间向后运动
-            world.step(dt / 1000);
-            ground.x = gbody.position[0] * factor;
-            ground.y = sh - gbody.position[1] * factor;
-            ground.rotation = 360 - gbody.angle * 180 / Math.PI;
-            display.x = boxBody.position[0] * factor;
-            display.y = sh - boxBody.position[1] * factor;
-            display.rotation = 360 - boxBody.angle * 180 / Math.PI;
-            if (boxBody.sleepState == p2.Body.SLEEPING) {
-                display.alpha = 0.5;
-            }
-            else {
-                display.alpha = 1;
-            }
-        }, this);
+    Main.prototype.onAddToStage = function () {
+        this.addEventListener(egret.Event.ENTER_FRAME, this.loop, this);
+        //鼠标点击添加刚体
+        this.stage.addEventListener(egret.TouchEvent.TOUCH_BEGIN, this.addOneBox, this);
+        this.createWorld();
+        this.createGround();
+        this.createBodies();
+        this.createDebug();
+    };
+    Main.prototype.createWorld = function () {
+        var wrd = new p2.World();
+        //wrd.sleepMode = p2.World.BODY_SLEEPING;
+        wrd.gravity = [0, 500];
+        this.world = wrd;
     };
     Main.prototype.createGround = function () {
-        var result = new egret.Sprite();
-        result.graphics.beginFill(0x2d78f4);
-        result.graphics.drawRect(0, 0, 600, 40);
-        result.graphics.endFill();
-        return result;
+        var stageHeight = egret.MainContext.instance.stage.stageHeight;
+        var groundShape = new p2.Plane();
+        var groundBody = new p2.Body();
+        groundBody.position[1] = stageHeight - 100;
+        groundBody.angle = Math.PI;
+        groundBody.addShape(groundShape);
+        this.world.addBody(groundBody);
     };
-    Main.prototype.createSprite = function () {
-        var result = new egret.Sprite();
-        result.graphics.beginFill(0x37827A);
-        result.graphics.drawRect(0, 0, 80, 40);
-        result.graphics.endFill();
-        return result;
+    Main.prototype.createBodies = function () {
+        //var boxShape: p2.Shape = new p2.Rectangle(100, 50);
+        var boxShape = new p2.Box({ width: 100, height: 50 });
+        var boxBody = new p2.Body({ mass: 1, position: [200, 200] });
+        boxBody.addShape(boxShape);
+        this.world.addBody(boxBody);
+        //var boxShape: p2.Shape = new p2.Rectangle(50, 50);
+        var boxShape = new p2.Box({ width: 50, height: 50 });
+        var boxBody = new p2.Body({ mass: 1, position: [200, 180], angularVelocity: 1 });
+        boxBody.addShape(boxShape);
+        this.world.addBody(boxBody);
+    };
+    Main.prototype.createDebug = function () {
+        //创建调试试图
+        this.debugDraw = new p2DebugDraw(this.world);
+        var sprite = new egret.Sprite();
+        this.addChild(sprite);
+        this.debugDraw.setSprite(sprite);
+    };
+    Main.prototype.loop = function () {
+        this.world.step(33 / 1000);
+        this.debugDraw.drawDebug();
+    };
+    Main.prototype.addOneBox = function (e) {
+        var positionX = Math.floor(e.stageX);
+        var positionY = Math.floor(e.stageY);
+        var shape;
+        var body = new p2.Body({ mass: 1, position: [positionX, positionY], angularVelocity: 1 });
+        var shapeType = this.types[Math.floor((Math.random() * this.types.length))];
+        //shapeType = "particle";
+        switch (shapeType) {
+            case "box":
+                //shape = new p2.Rectangle(Math.random() * 150 + 50, 100);
+                shape = new p2.Box({ width: Math.random() * 150 + 50, height: 100 });
+                break;
+            case "circle":
+                //shape = new p2.Circle(50);
+                shape = new p2.Circle({ radius: 50 });
+                break;
+        }
+        body.addShape(shape);
+        this.world.addBody(body);
     };
     return Main;
 }(egret.DisplayObjectContainer));

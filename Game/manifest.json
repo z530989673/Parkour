@@ -16,6 +16,7 @@
 	"game": [
 		"bin-debug/LoadingUI.js",
 		"bin-debug/Main.js",
+		"bin-debug/p2DebugDraw.js",
 		"bin-debug/Platform.js"
 	]
 }

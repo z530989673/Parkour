@@ -26,82 +26,95 @@
 //  EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //
 //////////////////////////////////////////////////////////////////////////////////////
-
-class Main extends egret.DisplayObjectContainer{
+class Main extends egret.DisplayObjectContainer {
+    private debugDraw: p2DebugDraw;
+    private world: p2.World;
     public constructor() {
         super();
-        this.addEventListener(egret.Event.ADDED_TO_STAGE,this.onAddToStage,this);
+        this.once(egret.Event.ADDED_TO_STAGE, this.onAddToStage, this);
     }
-     
-    private onAddToStage(event:egret.Event){
-         
-        var factor: number = 50;        
-        var sh: number = (egret.MainContext.instance.stage.stageHeight) / factor;
-        var sw: number = (egret.MainContext.instance.stage.stageWidth) / factor;
-        //创建world
-        var world: p2.World = new p2.World();
-        world.sleepMode = p2.World.BODY_SLEEPING;
-        //创建地面       
-        var gshape: p2.Plane = new p2.Plane();
-        var gbody: p2.Body = new p2.Body({
-                position:[0,-sh/2]
-            });
-        gbody.addShape(gshape);
-        world.addBody(gbody);
-        //添加显示对象   
-        var ground: egret.DisplayObject = this.createGround();
-        gbody.displays = [ground];
-        this.addChild(ground);
-         
-         
-        //添加长方形刚体
-        var boxShape: p2.Shape = new p2.Box({x:2,y:1});
-        var boxBody: p2.Body = new p2.Body({ mass: 1,position: [sw / 2,0],angularVelocity: 3 });
+    private onAddToStage(): void {
+        this.addEventListener(egret.Event.ENTER_FRAME, this.loop, this);
+        //鼠标点击添加刚体
+        this.stage.addEventListener(egret.TouchEvent.TOUCH_BEGIN, this.addOneBox, this);
+
+        this.createWorld();
+        this.createGround();
+        this.createBodies();
+        this.createDebug();
+    }
+    private createWorld(): void {
+        var wrd: p2.World = new p2.World();
+        //wrd.sleepMode = p2.World.BODY_SLEEPING;
+        wrd.gravity = [0, 500];
+        this.world = wrd;
+    }
+    private createGround(): void {
+        var stageHeight: number = egret.MainContext.instance.stage.stageHeight;
+        var groundShape: p2.Plane = new p2.Plane();
+        var groundBody: p2.Body = new p2.Body();
+        groundBody.position[1] = stageHeight - 100;
+        groundBody.angle = Math.PI;
+        groundBody.addShape(groundShape);
+
+
+        this.world.addBody(groundBody);
+    }
+    private createBodies(): void {
+        //var boxShape: p2.Shape = new p2.Rectangle(100, 50);
+        var boxShape: p2.Shape = new p2.Box({width: 100, height: 50});
+        var boxBody: p2.Body = new p2.Body({ mass: 1, position: [200, 200] });
         boxBody.addShape(boxShape);
-        world.addBody(boxBody);
-        //添加长方形刚体的显示对象   
-        var display: egret.DisplayObject = this.createSprite();
-        display.width = (<p2.Box>boxShape).width * factor;
-        display.height = (<p2.Box>boxShape).height * factor;
-        display.anchorOffsetX = display.width / 2
-        display.anchorOffsetY = display.height / 2;
-        //同步egret对象和p2对象
-        boxBody.displays = [display];
-        this.addChild(display);
-         
-        //添加帧事件侦听
-        egret.Ticker.getInstance().register(function(dt) {
-            //使世界时间向后运动
-            world.step(dt / 1000);
-            ground.x = gbody.position[0] * factor;
-            ground.y = sh - gbody.position[1] * factor;
-            ground.rotation = 360 - gbody.angle * 180 / Math.PI;
-             
-            display.x = boxBody.position[0] * factor;
-            display.y = sh - boxBody.position[1] * factor;
-            display.rotation = 360 - boxBody.angle * 180 / Math.PI;
-            if(boxBody.sleepState == p2.Body.SLEEPING) {
-                display.alpha = 0.5;
-            }else {
-                display.alpha = 1;
-                    }
-        },this);       
+        this.world.addBody(boxBody);
+
+        //var boxShape: p2.Shape = new p2.Rectangle(50, 50);
+        var boxShape: p2.Shape = new p2.Box({width: 50, height: 50});
+        var boxBody: p2.Body = new p2.Body({ mass: 1, position: [200, 180], angularVelocity: 1 });
+        boxBody.addShape(boxShape);
+        this.world.addBody(boxBody);
     }
-     
-    private createGround(): egret.Sprite {
-        var result: egret.Sprite = new egret.Sprite();
-        result.graphics.beginFill(0x2d78f4);
-        result.graphics.drawRect(0,0,600,40);
-        result.graphics.endFill();
-        return result;
-    }  
-      
- 
-    private createSprite(): egret.Sprite {
-        var result: egret.Sprite = new egret.Sprite();
-        result.graphics.beginFill(0x37827A);
-        result.graphics.drawRect(0,0,80,40);
-        result.graphics.endFill();
-        return result;
+    private createDebug(): void {
+        //创建调试试图
+        this.debugDraw = new p2DebugDraw(this.world);
+        var sprite: egret.Sprite = new egret.Sprite();
+        this.addChild(sprite);
+        this.debugDraw.setSprite(sprite);
+    }
+    private loop(): void {
+        this.world.step(33 / 1000);
+        this.debugDraw.drawDebug();
+    }
+    private types: string[] = ["box", "circle"]
+    private addOneBox(e: egret.TouchEvent): void {
+        var positionX: number = Math.floor(e.stageX);
+        var positionY: number = Math.floor(e.stageY);
+        var shape: p2.Shape;
+        var body = new p2.Body({ mass: 1, position: [positionX, positionY], angularVelocity: 1 });
+
+        var shapeType = this.types[Math.floor((Math.random() * this.types.length))];
+        //shapeType = "particle";
+        switch (shapeType) {
+            case "box":
+                //shape = new p2.Rectangle(Math.random() * 150 + 50, 100);
+                shape = new p2.Box({width: Math.random() * 150 + 50, height: 100});
+                break;
+            case "circle":
+                //shape = new p2.Circle(50);
+                shape = new p2.Circle({radius: 50});
+                break;
+            // case "capsule":
+            //     //shape = new p2.Capsule(50, 10);
+            //     shape = new p2.Capsule({length: 50, radius: 10});
+            //     break;
+            // case "line":
+            //     //shape = new p2.Line(150);
+            //     shape = new p2.Line({length: 150});
+            //     break;
+            // case "particle":
+            //     shape = new p2.Particle();
+            //     break;
+        }
+        body.addShape(shape);
+        this.world.addBody(body);
     }
 }
