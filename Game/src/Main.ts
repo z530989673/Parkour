@@ -31,6 +31,7 @@ class Main extends egret.DisplayObjectContainer {
     private world: p2.World;
     private circleBody: p2.Body;
     private groundBody: p2.Body;
+    private baseUI: egret.DisplayObjectContainer;
 
     public game:Game;
 
@@ -40,9 +41,11 @@ class Main extends egret.DisplayObjectContainer {
         this.game = new Game(this);
     }
     private onAddToStage(): void {
+        this.runGame().catch(e => {
+            console.log(e);
+        })
+        RES.addEventListener(RES.ResourceEvent.GROUP_COMPLETE, this.onGroupComplete, this);
         this.addEventListener(egret.Event.ENTER_FRAME, this.loop, this);
-        //鼠标点击添加刚体
-        this.stage.addEventListener(egret.TouchEvent.TOUCH_BEGIN, this.jump, this);
         
         this.game.init();
         this.createWorld();
@@ -50,6 +53,29 @@ class Main extends egret.DisplayObjectContainer {
         this.createBodies();
         this.createDebug();
     }
+
+    private async runGame()
+    {
+        await this.loadResource();
+    }
+
+    private async loadResource()
+    {
+        try {
+            await RES.loadConfig("resource/default.res.json", "resource/");
+            await RES.loadGroup("preload");
+        }
+        catch (e)
+        {
+            console.error(e);
+        }
+    }
+
+    private onGroupComplete()
+    {
+        this.createUI();
+    }
+
     private createWorld(): void {
         var wrd: p2.World = new p2.World();
         //wrd.sleepMode = p2.World.BODY_SLEEPING;
@@ -109,6 +135,23 @@ class Main extends egret.DisplayObjectContainer {
         this.addChild(sprite);
         this.debugDraw.setSprite(sprite);
     }
+
+    private createUI(): void {
+        var baseUI:egret.DisplayObjectContainer = this.baseUI = new egret.DisplayObjectContainer();
+        var jumpButton:egret.Bitmap = new egret.Bitmap();
+        jumpButton.texture = RES.getRes('button_1_png');
+        jumpButton.width = 200;
+        jumpButton.height = 200;
+        jumpButton.x = 100;
+        jumpButton.y = 500;
+        jumpButton.touchEnabled = true;
+        jumpButton.pixelHitTest = true;
+        jumpButton.addEventListener(egret.TouchEvent.TOUCH_BEGIN, this.jump, this);
+        jumpButton.addEventListener(egret.TouchEvent.TOUCH_END, this.jumpEnd, this);
+        baseUI.addChild(jumpButton);
+        this.stage.addChild(baseUI);
+    }
+
     private loop(): void {
         this.world.step(33 / 1000);
         this.debugDraw.drawDebug();
@@ -136,7 +179,14 @@ class Main extends egret.DisplayObjectContainer {
                 this.circleBody.velocity = [this.circleBody.velocity[0], (this.circleBody.velocity[1] < 0 ? this.circleBody.velocity[1] : 0) - 400];
             }
         }
+
+        (this.baseUI.getChildAt(0) as egret.Bitmap).texture = RES.getRes('button_2_png');
     } 
+
+    private jumpEnd(e:egret.TouchEvent):void
+    {
+        (this.baseUI.getChildAt(0) as egret.Bitmap).texture = RES.getRes('button_1_png');
+    }
 
     private onGround : boolean = true;
     private onBeginContact(event) : void 
