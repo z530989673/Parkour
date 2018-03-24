@@ -42,74 +42,48 @@ var Main = (function (_super) {
         var _this = _super.call(this) || this;
         _this.types = ["box", "circle"];
         _this.once(egret.Event.ADDED_TO_STAGE, _this.onAddToStage, _this);
+        _this.game = new Game(_this);
         return _this;
     }
     Main.prototype.onAddToStage = function () {
-        this.addEventListener(egret.Event.ENTER_FRAME, this.loop, this);
+        this.addEventListener(egret.Event.ENTER_FRAME, this.update, this);
         //鼠标点击添加刚体
         this.stage.addEventListener(egret.TouchEvent.TOUCH_BEGIN, this.addOneBox, this);
-        this.createWorld();
-        this.createGround();
-        this.createBodies();
-        this.createDebug();
+        this.game.init();
     };
-    Main.prototype.createWorld = function () {
-        var wrd = new p2.World();
-        //wrd.sleepMode = p2.World.BODY_SLEEPING;
-        wrd.gravity = [0, 500];
-        this.world = wrd;
-    };
-    Main.prototype.createGround = function () {
-        var stageHeight = egret.MainContext.instance.stage.stageHeight;
-        var groundShape = new p2.Plane();
-        var groundBody = new p2.Body();
-        groundBody.position[1] = stageHeight - 100;
-        groundBody.angle = Math.PI;
-        groundBody.addShape(groundShape);
-        this.world.addBody(groundBody);
-    };
-    Main.prototype.createBodies = function () {
-        //var boxShape: p2.Shape = new p2.Rectangle(100, 50);
-        var boxShape = new p2.Box({ width: 100, height: 50 });
-        var boxBody = new p2.Body({ mass: 1, position: [200, 200] });
-        boxBody.addShape(boxShape);
-        this.world.addBody(boxBody);
-        //var boxShape: p2.Shape = new p2.Rectangle(50, 50);
-        var boxShape = new p2.Box({ width: 50, height: 50 });
-        var boxBody = new p2.Body({ mass: 1, position: [200, 180], angularVelocity: 1 });
-        boxBody.addShape(boxShape);
-        this.world.addBody(boxBody);
-    };
-    Main.prototype.createDebug = function () {
-        //创建调试试图
-        this.debugDraw = new p2DebugDraw(this.world);
-        var sprite = new egret.Sprite();
-        this.addChild(sprite);
-        this.debugDraw.setSprite(sprite);
-    };
-    Main.prototype.loop = function () {
-        this.world.step(33 / 1000);
-        this.debugDraw.drawDebug();
+    Main.prototype.update = function () {
+        this.game.update();
     };
     Main.prototype.addOneBox = function (e) {
-        var positionX = Math.floor(e.stageX);
-        var positionY = Math.floor(e.stageY);
-        var shape;
-        var body = new p2.Body({ mass: 1, position: [positionX, positionY], angularVelocity: 1 });
-        var shapeType = this.types[Math.floor((Math.random() * this.types.length))];
-        //shapeType = "particle";
-        switch (shapeType) {
-            case "box":
-                //shape = new p2.Rectangle(Math.random() * 150 + 50, 100);
-                shape = new p2.Box({ width: Math.random() * 150 + 50, height: 100 });
-                break;
-            case "circle":
-                //shape = new p2.Circle(50);
-                shape = new p2.Circle({ radius: 50 });
-                break;
-        }
-        body.addShape(shape);
-        this.world.addBody(body);
+        // var positionX: number = Math.floor(e.stageX);
+        // var positionY: number = Math.floor(e.stageY);
+        // var shape: p2.Shape;
+        // var body = new p2.Body({ mass: 1, position: [positionX, positionY], type:p2.Body.STATIC, angularVelocity: 1 });
+        // var shapeType = this.types[Math.floor((Math.random() * this.types.length))];
+        // //shapeType = "particle";
+        // switch (shapeType) {
+        //     case "box":
+        //         //shape = new p2.Rectangle(Math.random() * 150 + 50, 100);
+        //         shape = new p2.Box({width: Math.random() * 150 + 50, height: 100});
+        //         break;
+        //     case "circle":
+        //         //shape = new p2.Circle(50);
+        //         shape = new p2.Circle({radius: 50});
+        //         break;
+        //     // case "capsule":
+        //     //     //shape = new p2.Capsule(50, 10);
+        //     //     shape = new p2.Capsule({length: 50, radius: 10});
+        //     //     break;
+        //     // case "line":
+        //     //     //shape = new p2.Line(150);
+        //     //     shape = new p2.Line({length: 150});
+        //     //     break;
+        //     // case "particle":
+        //     //     shape = new p2.Particle();
+        //     //     break;
+        // }
+        // body.addShape(shape);
+        // this.world.addBody(body);
     };
     return Main;
 }(egret.DisplayObjectContainer));
