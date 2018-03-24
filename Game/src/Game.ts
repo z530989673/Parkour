@@ -3,40 +3,55 @@
 class Game
 {
     private debugDraw: p2DebugDraw;
-    private world: p2.World;
-    private anchorPosX = 0;
-    private anchroPosY = 0;
+    public world: p2.World;
+    public anchorPosX = 0;
+    public anchorPosY = 0;
+    public CameraRefPrecentX = 0.4;
+    public CameraRefPrecentYUp = 0.6;
+    public CameraRefPrecentYDown = 0.65;
+    public marginY = 300;
     private main:Main;
 
     public backgroundLayer : egret.Sprite;
     public mainLayer : egret.Sprite;
-    public UILayer :egret.Sprite;
-    
-    private circleBody: p2.Body;
-    private groundBody: p2.Body;
     private baseUI: egret.DisplayObjectContainer;
+    private jumpButton : egret.Bitmap;
+    
+    private groundBody: p2.Body;
+    private player : Player;
 
     public constructor(main : Main)
     {
         this.main = main;
         this.backgroundLayer = new egret.Sprite();
         this.mainLayer = new egret.Sprite();
-        this.UILayer = new egret.Sprite();
+        this.createWorld();
+        this.player = new Player(this);
     }
 
     public init(): void {
 
-        this.createWorld();
+        this.followPlayer();
         this.createGround();
-        this.createBodies();
         this.createDebug();
+        
         this.createUI();
     }
 
     public update() : void{
         this.world.step(33 / 1000);
         this.debugDraw.drawDebug();
-        this.judgeCircleBodyVelocity();
+        this.player.update();
+        this.followPlayer();
+    }
+
+    public followPlayer() : void{
+        this.anchorPosX = this.player.GetPosX() - this.main.stage.stageWidth * this.CameraRefPrecentX;
+        var dif = this.player.GetPosY() - this.anchorPosY;
+        if (dif < this.main.stage.stageHeight * this.CameraRefPrecentYUp)
+            this.anchorPosY = this.player.GetPosY() - this.main.stage.stageHeight * this.CameraRefPrecentYUp;
+        else if (dif > this.main.stage.stageHeight * this.CameraRefPrecentYDown)
+            this.anchorPosY = this.player.GetPosY() - this.main.stage.stageHeight * this.CameraRefPrecentYDown;
     }
 
     private createWorld(): void {
@@ -44,8 +59,6 @@ class Game
         //wrd.sleepMode = p2.World.BODY_SLEEPING;
         wrd.gravity = [0, 500];
         this.world = wrd;
-        this.world.on("beginContact", this.onBeginContact, this);
-        this.world.on("endContact", this.onEndContact, this);
     }
 
     private createGround(): void {
@@ -83,129 +96,32 @@ class Game
 
         this.world.addBody(groundBody);
     }
-    
-    private createBodies(): void 
-    {
-        var boxShape: p2.Shape = new p2.Circle({radius: 50});
-        var circleBody: p2.Body = this.circleBody = new p2.Body({ mass: 1, position: [100, egret.MainContext.instance.stage.stageHeight - 100], angularVelocity: 1 });
-        circleBody.addShape(boxShape);
-        this.world.addBody(circleBody);
-    }
 
     private createDebug(): void {
         //创建调试试图
-        this.debugDraw = new p2DebugDraw(this.world);
+        this.debugDraw = new p2DebugDraw(this);
         var sprite: egret.Sprite = new egret.Sprite();
         this.main.addChild(sprite);
         this.debugDraw.setSprite(sprite);
     }
     
-    private onGround : boolean = true;
-    private onBeginContact(event) : void 
-    {
-        var bodyA : p2.Body = event.bodyA;
-        var bodyB : p2.Body = event.bodyB;
-
-        if(bodyB.id == this.circleBody.id && bodyA.id == this.groundBody.id)
-        {
-            this.startJump = false;
-            this.jumpTwice = false;
-            this.onGround = true;
-        }
-    }
-
-    private onEndContact(event) : void
-    {
-        var bodyA : p2.Body = event.bodyA;
-        var bodyB : p2.Body = event.bodyB;
-
-        if(bodyA.id == this.groundBody.id)
-        {
-            this.onGround = false;
-        }
-    }
-
-
     private createUI(): void {
         var baseUI:egret.DisplayObjectContainer = this.baseUI = new egret.DisplayObjectContainer();
-        var testButton:egret.Bitmap = new egret.Bitmap();
-        testButton.texture = RES.getRes('button_1_png');
-        testButton.width = 200;
-        testButton.height = 200;
-        testButton.x = 500;
-        testButton.y = 500;
-        testButton.touchEnabled = true;
-        testButton.pixelHitTest = true;
-        testButton.addEventListener(egret.TouchEvent.TOUCH_BEGIN, this.test, this);
-
-        var startButton:egret.Bitmap = new egret.Bitmap();
-        startButton.texture = RES.getRes('button_1_png');
-        startButton.width = 200;
-        startButton.height = 200;
-        startButton.x = 1000;
-        startButton.y = 500;
-        startButton.touchEnabled = true;
-        startButton.pixelHitTest = true;
-        startButton.addEventListener(egret.TouchEvent.TOUCH_BEGIN, this.start, this);
-
-        var jumpButton:egret.Bitmap = new egret.Bitmap();
-        jumpButton.texture = RES.getRes('button_1_png');
-        jumpButton.width = 200;
-        jumpButton.height = 200;
-        jumpButton.x = 100;
-        jumpButton.y = 500;
-        jumpButton.touchEnabled = true;
-        jumpButton.pixelHitTest = true;
-        jumpButton.addEventListener(egret.TouchEvent.TOUCH_BEGIN, this.jump, this);
-        jumpButton.addEventListener(egret.TouchEvent.TOUCH_END, this.jumpEnd, this);
         baseUI.addChild(jumpButton);
-        baseUI.addChild(testButton);
-        baseUI.addChild(startButton);
         this.main.stage.addChild(baseUI);
     }
 
-    private startJump : boolean = false;
-    private jumpTwice : boolean = false;
-    private jump(e:egret.TouchEvent):void
-    {   
-        if(!this.startJump)
-        {
-            Net.instance.sendCmd("jump", ["1", "1"]);
-            this.startJump = true;
-            this.circleBody.velocity = [this.circleBody.velocity[0], (this.circleBody.velocity[1] > 0 ? this.circleBody.velocity[1] : 0) - 400];
-        }
-        else
-        {
-            if(!this.jumpTwice)
-            {
-                this.jumpTwice = true;
-                this.circleBody.velocity = [this.circleBody.velocity[0], (this.circleBody.velocity[1] < 0 ? this.circleBody.velocity[1] : 0) - 400];
-            }
-        }
+   
 
-        (this.baseUI.getChildAt(0) as egret.Bitmap).texture = RES.getRes('button_2_png');
-    } 
-
-    private start(e:egret.TouchEvent):void
-    {   
-        Net.instance.sendCmd("create", []);
-    } 
-    private test(e:egret.TouchEvent):void
-    {   
-        Net.instance.sendCmd("join", ["1"]);
-    } 
-    private jumpEnd(e:egret.TouchEvent):void
-    {
-        (this.baseUI.getChildAt(0) as egret.Bitmap).texture = RES.getRes('button_1_png');
+    public jump(e:egret.TouchEvent):void{
+        this.player.jump(e);
     }
 
-    private maxSpeed : number = 500
-    private correctForce : number = 250
-    private judgeCircleBodyVelocity() : void
-    {
-        if (this.circleBody.velocity[0] < this.maxSpeed)
-            this.circleBody.applyForce([this.correctForce, 0], [0, 0]);
-        else if (this.circleBody.velocity[0] > this.maxSpeed)
-            this.circleBody.applyForce([-this.correctForce, 0], [0, 0]);
+    public jumpEnd(e:egret.TouchEvent):void{
+        this.player.jumpEnd(e);
+    }
+
+    public switchJumpButton(button :string) : void{
+        this.jumpButton.texture = RES.getRes(button);
     }
 }
