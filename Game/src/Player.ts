@@ -10,7 +10,25 @@ class Player
     private jumpTwice : boolean = false;
     private onGround : boolean = true;
 
+    public originPosX : number;
+    public originPosY : number;
     
+    public GetPosX() : number{
+        return this.body.position[0];
+    }
+
+    public GetPosY() : number{
+        return this.body.position[1];
+    }
+
+    public GetOffsetPosX() : number{
+        return this.body.position[0] - this.originPosX;
+    }
+
+    public GetOffsetPosY() : number{
+        return this.body.position[1] - this.originPosY;
+    }
+
     public constructor(game : Game)
     {
         this.game = game;
@@ -22,8 +40,10 @@ class Player
 
     private createBody(): void 
     {
+        this.originPosX = 100;
+        this.originPosY = egret.MainContext.instance.stage.stageHeight - 100;
         var boxShape: p2.Shape = new p2.Circle({radius: 50});
-        this.body = new p2.Body({ mass: 1, position: [100, egret.MainContext.instance.stage.stageHeight - 100], angularVelocity: 1 });
+        this.body = new p2.Body({ mass: 1, position: [this.originPosX, this.originPosY], angularVelocity: 1 });
         this.body.addShape(boxShape);
         this.world.addBody(this.body);
     }
@@ -58,13 +78,11 @@ class Player
         }
 
         this.game.switchJumpButton('button_2_png');
-        //(this.baseUI.getChildAt(0) as egret.Bitmap).texture = RES.getRes('button_2_png');
     } 
 
     public jumpEnd(e:egret.TouchEvent):void
     {
         this.game.switchJumpButton('button_1_png');
-        //(this.baseUI.getChildAt(0) as egret.Bitmap).texture = RES.getRes('button_1_png');
     }
 
     private maxSpeed : number = 500

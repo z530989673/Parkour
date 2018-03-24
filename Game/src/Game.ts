@@ -4,8 +4,12 @@ class Game
 {
     private debugDraw: p2DebugDraw;
     public world: p2.World;
-    private anchorPosX = 0;
-    private anchroPosY = 0;
+    public anchorPosX = 0;
+    public anchorPosY = 0;
+    public CameraRefPrecentX = 0.4;
+    public CameraRefPrecentYUp = 0.6;
+    public CameraRefPrecentYDown = 0.65;
+    public marginY = 300;
     private main:Main;
 
     public backgroundLayer : egret.Sprite;
@@ -21,15 +25,15 @@ class Game
         this.main = main;
         this.backgroundLayer = new egret.Sprite();
         this.mainLayer = new egret.Sprite();
+        this.createWorld();
+        this.player = new Player(this);
     }
 
     public init(): void {
 
-        this.createWorld();
+        this.followPlayer();
         this.createGround();
         this.createDebug();
-
-        this.player = new Player(this);
         
         this.createUI();
     }
@@ -38,6 +42,16 @@ class Game
         this.world.step(33 / 1000);
         this.debugDraw.drawDebug();
         this.player.update();
+        this.followPlayer();
+    }
+
+    public followPlayer() : void{
+        this.anchorPosX = this.player.GetPosX() - this.main.stage.stageWidth * this.CameraRefPrecentX;
+        var dif = this.player.GetPosY() - this.anchorPosY;
+        if (dif < this.main.stage.stageHeight * this.CameraRefPrecentYUp)
+            this.anchorPosY = this.player.GetPosY() - this.main.stage.stageHeight * this.CameraRefPrecentYUp;
+        else if (dif > this.main.stage.stageHeight * this.CameraRefPrecentYDown)
+            this.anchorPosY = this.player.GetPosY() - this.main.stage.stageHeight * this.CameraRefPrecentYDown;
     }
 
     private createWorld(): void {
@@ -85,7 +99,7 @@ class Game
 
     private createDebug(): void {
         //创建调试试图
-        this.debugDraw = new p2DebugDraw(this.world);
+        this.debugDraw = new p2DebugDraw(this);
         var sprite: egret.Sprite = new egret.Sprite();
         this.main.addChild(sprite);
         this.debugDraw.setSprite(sprite);
@@ -115,7 +129,7 @@ class Game
         this.player.jumpEnd(e);
     }
 
-    public switchJumpButton( button :string) : void{
+    public switchJumpButton(button :string) : void{
         this.jumpButton.texture = RES.getRes(button);
     }
 }
