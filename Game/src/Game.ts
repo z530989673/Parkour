@@ -128,6 +128,26 @@ class Game
 
     private createUI(): void {
         var baseUI:egret.DisplayObjectContainer = this.baseUI = new egret.DisplayObjectContainer();
+        var testButton:egret.Bitmap = new egret.Bitmap();
+        testButton.texture = RES.getRes('button_1_png');
+        testButton.width = 200;
+        testButton.height = 200;
+        testButton.x = 500;
+        testButton.y = 500;
+        testButton.touchEnabled = true;
+        testButton.pixelHitTest = true;
+        testButton.addEventListener(egret.TouchEvent.TOUCH_BEGIN, this.test, this);
+
+        var startButton:egret.Bitmap = new egret.Bitmap();
+        startButton.texture = RES.getRes('button_1_png');
+        startButton.width = 200;
+        startButton.height = 200;
+        startButton.x = 1000;
+        startButton.y = 500;
+        startButton.touchEnabled = true;
+        startButton.pixelHitTest = true;
+        startButton.addEventListener(egret.TouchEvent.TOUCH_BEGIN, this.start, this);
+
         var jumpButton:egret.Bitmap = new egret.Bitmap();
         jumpButton.texture = RES.getRes('button_1_png');
         jumpButton.width = 200;
@@ -139,6 +159,8 @@ class Game
         jumpButton.addEventListener(egret.TouchEvent.TOUCH_BEGIN, this.jump, this);
         jumpButton.addEventListener(egret.TouchEvent.TOUCH_END, this.jumpEnd, this);
         baseUI.addChild(jumpButton);
+        baseUI.addChild(testButton);
+        baseUI.addChild(startButton);
         this.main.stage.addChild(baseUI);
     }
 
@@ -148,6 +170,7 @@ class Game
     {   
         if(!this.startJump)
         {
+            Net.instance.sendCmd("jump", ["1", "1"]);
             this.startJump = true;
             this.circleBody.velocity = [this.circleBody.velocity[0], (this.circleBody.velocity[1] > 0 ? this.circleBody.velocity[1] : 0) - 400];
         }
@@ -163,6 +186,14 @@ class Game
         (this.baseUI.getChildAt(0) as egret.Bitmap).texture = RES.getRes('button_2_png');
     } 
 
+    private start(e:egret.TouchEvent):void
+    {   
+        Net.instance.sendCmd("create", []);
+    } 
+    private test(e:egret.TouchEvent):void
+    {   
+        Net.instance.sendCmd("join", ["1"]);
+    } 
     private jumpEnd(e:egret.TouchEvent):void
     {
         (this.baseUI.getChildAt(0) as egret.Bitmap).texture = RES.getRes('button_1_png');
