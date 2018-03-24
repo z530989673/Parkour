@@ -40,50 +40,114 @@ var Main = (function (_super) {
     __extends(Main, _super);
     function Main() {
         var _this = _super.call(this) || this;
-        _this.types = ["box", "circle"];
+        _this.startJump = false;
+        _this.jumpTwice = false;
+        _this.onGround = true;
+        _this.maxSpeed = 500;
+        _this.correctForce = 250;
         _this.once(egret.Event.ADDED_TO_STAGE, _this.onAddToStage, _this);
         _this.game = new Game(_this);
         return _this;
     }
     Main.prototype.onAddToStage = function () {
-        this.addEventListener(egret.Event.ENTER_FRAME, this.update, this);
+        this.addEventListener(egret.Event.ENTER_FRAME, this.loop, this);
         //鼠标点击添加刚体
-        this.stage.addEventListener(egret.TouchEvent.TOUCH_BEGIN, this.addOneBox, this);
+        this.stage.addEventListener(egret.TouchEvent.TOUCH_BEGIN, this.jump, this);
         this.game.init();
+        this.createWorld();
+        this.createGround();
+        this.createBodies();
+        this.createDebug();
+    };
+    Main.prototype.createWorld = function () {
+        var wrd = new p2.World();
+        //wrd.sleepMode = p2.World.BODY_SLEEPING;
+        wrd.gravity = [0, 500];
+        this.world = wrd;
+        this.world.on("beginContact", this.onBeginContact, this);
+        this.world.on("endContact", this.onEndContact, this);
+    };
+    Main.prototype.createGround = function () {
+        var stageHeight = egret.MainContext.instance.stage.stageHeight;
+        var groundShape = new p2.Box({ width: 5000, height: 100 });
+        var pivotX = 500;
+        var pivotY = -50;
+        var vertices = [
+            [pivotX + 0, pivotY + -200],
+            [pivotX + 200, pivotY + 0],
+            [pivotX + -200, pivotY + 0]
+        ];
+        var triangleShape = new p2.Convex({ vertices: vertices });
+        pivotX = 1500;
+        pivotY = -50;
+        var vertices = [
+            [pivotX + 0, pivotY + -500],
+            [pivotX + 400, pivotY + 0],
+            [pivotX + -400, pivotY + 0]
+        ];
+        var triangleShape2 = new p2.Convex({ vertices: vertices });
+        var groundBody = this.groundBody = new p2.Body();
+        groundBody.position = [0, stageHeight];
+        groundBody.type = p2.Body.STATIC;
+        groundBody.addShape(groundShape);
+        groundBody.addShape(triangleShape);
+        groundBody.addShape(triangleShape2);
+        this.world.addBody(groundBody);
+    };
+    Main.prototype.createBodies = function () {
+        var boxShape = new p2.Circle({ radius: 50 });
+        var circleBody = this.circleBody = new p2.Body({ mass: 1, position: [100, egret.MainContext.instance.stage.stageHeight - 100], angularVelocity: 1 });
+        circleBody.addShape(boxShape);
+        this.world.addBody(circleBody);
+    };
+    Main.prototype.createDebug = function () {
+        //创建调试试图
+        this.debugDraw = new p2DebugDraw(this.world);
+        var sprite = new egret.Sprite();
+        this.addChild(sprite);
+        this.debugDraw.setSprite(sprite);
+    };
+    Main.prototype.loop = function () {
+        this.world.step(33 / 1000);
+        this.debugDraw.drawDebug();
+        this.judgeCircleBodyVelocity();
     };
     Main.prototype.update = function () {
         this.game.update();
     };
-    Main.prototype.addOneBox = function (e) {
-        // var positionX: number = Math.floor(e.stageX);
-        // var positionY: number = Math.floor(e.stageY);
-        // var shape: p2.Shape;
-        // var body = new p2.Body({ mass: 1, position: [positionX, positionY], type:p2.Body.STATIC, angularVelocity: 1 });
-        // var shapeType = this.types[Math.floor((Math.random() * this.types.length))];
-        // //shapeType = "particle";
-        // switch (shapeType) {
-        //     case "box":
-        //         //shape = new p2.Rectangle(Math.random() * 150 + 50, 100);
-        //         shape = new p2.Box({width: Math.random() * 150 + 50, height: 100});
-        //         break;
-        //     case "circle":
-        //         //shape = new p2.Circle(50);
-        //         shape = new p2.Circle({radius: 50});
-        //         break;
-        //     // case "capsule":
-        //     //     //shape = new p2.Capsule(50, 10);
-        //     //     shape = new p2.Capsule({length: 50, radius: 10});
-        //     //     break;
-        //     // case "line":
-        //     //     //shape = new p2.Line(150);
-        //     //     shape = new p2.Line({length: 150});
-        //     //     break;
-        //     // case "particle":
-        //     //     shape = new p2.Particle();
-        //     //     break;
-        // }
-        // body.addShape(shape);
-        // this.world.addBody(body);
+    Main.prototype.jump = function (e) {
+        if (!this.startJump) {
+            this.startJump = true;
+            this.circleBody.velocity = [this.circleBody.velocity[0], (this.circleBody.velocity[1] > 0 ? this.circleBody.velocity[1] : 0) - 400];
+        }
+        else {
+            if (!this.jumpTwice) {
+                this.jumpTwice = true;
+                this.circleBody.velocity = [this.circleBody.velocity[0], (this.circleBody.velocity[1] < 0 ? this.circleBody.velocity[1] : 0) - 400];
+            }
+        }
+    };
+    Main.prototype.onBeginContact = function (event) {
+        var bodyA = event.bodyA;
+        var bodyB = event.bodyB;
+        if (bodyB.id == this.circleBody.id && bodyA.id == this.groundBody.id) {
+            this.startJump = false;
+            this.jumpTwice = false;
+            this.onGround = true;
+        }
+    };
+    Main.prototype.onEndContact = function (event) {
+        var bodyA = event.bodyA;
+        var bodyB = event.bodyB;
+        if (bodyA.id == this.groundBody.id) {
+            this.onGround = false;
+        }
+    };
+    Main.prototype.judgeCircleBodyVelocity = function () {
+        if (this.circleBody.velocity[0] < this.maxSpeed)
+            this.circleBody.applyForce([this.correctForce, 0], [0, 0]);
+        else if (this.circleBody.velocity[0] > this.maxSpeed)
+            this.circleBody.applyForce([-this.correctForce, 0], [0, 0]);
     };
     return Main;
 }(egret.DisplayObjectContainer));
