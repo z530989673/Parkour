@@ -27,17 +27,27 @@
 //
 //////////////////////////////////////////////////////////////////////////////////////
 class Main extends egret.DisplayObjectContainer {
+<<<<<<< Updated upstream
     private debugDraw: p2DebugDraw;
     private world: p2.World;
     private circleBody: p2.Body;
     private groundBody: p2.Body;
     private baseUI: egret.DisplayObjectContainer;
+=======
+    //游戏房间界面
+    public room:Room;
+    //游戏主界面
+>>>>>>> Stashed changes
     public game:Game;
 
     public constructor() {
         super();
         this.once(egret.Event.ADDED_TO_STAGE, this.onAddToStage, this);
+<<<<<<< Updated upstream
         //Net.instance.connectToServer();
+=======
+        this.room = new Room(this);
+>>>>>>> Stashed changes
         this.game = new Game(this);
     }
     private onAddToStage(): void {
@@ -45,7 +55,6 @@ class Main extends egret.DisplayObjectContainer {
             console.log(e);
         })
         RES.addEventListener(RES.ResourceEvent.GROUP_COMPLETE, this.onGroupComplete, this);
-        
     }
 
     private async runGame()
@@ -67,11 +76,12 @@ class Main extends egret.DisplayObjectContainer {
 
     private onGroupComplete()
     {
-        this.game.init();
-        this.addEventListener(egret.Event.ENTER_FRAME, this.update, this);
+        this.room.init();
+        //this.game.init();
+        //this.addEventListener(egret.Event.ENTER_FRAME, this.update, this);
     }
 
     private update(): void {
-        this.game.update();
+        //this.game.update();
     }
 }
