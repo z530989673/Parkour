@@ -1,19 +1,32 @@
 // TypeScript file
 
 class Obstacle extends egret.Sprite {
-    private  
-    public constructor() {
-    super();
-    this.draw();
+    
+    main : BasicBitmap;
+    rect : egret.Rectangle;
+    outline : egret.Sprite;
+    outlineColor : number;
+    
+    public constructor(path:string, rect:egret.Rectangle, outlineColor:number) {
+        super();
+
+        this.rect = rect;
+        this.main = new BasicBitmap(path, this.rect);
+        this.outline = new egret.Sprite();
+        this.outlineColor = outlineColor;
+
+        this.addChild(this.main);
+        this.addChild(this.outline);
+        
+        this.addEventListener(egret.Event.ENTER_FRAME, this.drawOutline, this);
     }
-    private draw(){
-    // this.graphics.lineStyle(1, 0x009393);
-    // this.graphics.beginFill(0xCE0000);
-    // this.graphics.moveTo(100,100);
-    // this.graphics.lineTo(200,200);
-    // this.graphics.lineTo(200,100);
-    // this.graphics.lineTo(50,0);
-    // this.graphics.lineTo(100,100);
-    // this.graphics.endFill();
+
+    public drawOutline()
+    {
+        var graphic = this.outline.graphics;
+        graphic.clear();
+        
+        graphic.lineStyle(5, this.outlineColor);
+        graphic.drawRect(this.rect.x,this.rect.y,this.rect.width,this.rect.height);
     }
 }

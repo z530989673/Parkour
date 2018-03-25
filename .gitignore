@@ -1,3 +1,4 @@
 /Game/bin-debug/*.js
 /Game/bin-debug/*.map
 /Game/bin-debug
+/Game/debug.log

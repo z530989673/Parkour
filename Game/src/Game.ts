@@ -23,19 +23,24 @@ class Game
     public constructor(main : Main)
     {
         this.main = main;
-        this.backgroundLayer = new egret.Sprite();
-        this.mainLayer = new egret.Sprite();
         this.createWorld();
         this.player = new Player(this);
     }
 
     public init(): void {
 
+        this.createLayer();
         this.followPlayer();
         this.createGround();
         this.createDebug();
-        
         this.createUI();
+    }
+
+    public createLayer() : void{
+        this.backgroundLayer = new egret.Sprite();
+        this.mainLayer = new egret.Sprite();
+        this.main.stage.addChild(this.backgroundLayer);
+        this.main.stage.addChild(this.mainLayer);
     }
 
     public update() : void{
@@ -52,6 +57,8 @@ class Game
             this.anchorPosY = this.player.GetPosY() - this.main.stage.stageHeight * this.CameraRefPrecentYUp;
         else if (dif > this.main.stage.stageHeight * this.CameraRefPrecentYDown)
             this.anchorPosY = this.player.GetPosY() - this.main.stage.stageHeight * this.CameraRefPrecentYDown;
+        this.mainLayer.x = - this.anchorPosX;
+        this.mainLayer.y = - this.anchorPosY;
     }
 
     private createWorld(): void {
@@ -62,6 +69,9 @@ class Game
     }
 
     private createGround(): void {
+        var obs = new Obstacle('bg_jpg',new egret.Rectangle(1200,1000,200,200),0x000000);
+        this.mainLayer.addChild(obs);
+
         var stageHeight: number = egret.MainContext.instance.stage.stageHeight;
         
         var groundShape: p2.Shape = new p2.Box({width: 5000, height: 100});
