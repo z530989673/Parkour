@@ -1,7 +1,7 @@
 {
 	"groups": [
 		{
-			"keys": "bg_jpg,egret_icon_png,description_json,button_1_png,button_2_png",
+			"keys": "bg_jpg,egret_icon_png,description_json,button_1_png,button_2_png,zh_jpeg,zb_jpeg,sb_jpeg,triangle_jpeg,button_jpeg,button2_jpeg,sb2_jpeg,triangle2_jpeg,zb2_jpeg,zh2_jpeg",
 			"name": "preload"
 		}
 	],
@@ -30,6 +30,56 @@
 			"name": "button_2_png",
 			"type": "image",
 			"url": "assets/button_2.png"
+		},
+		{
+			"name": "zh_jpeg",
+			"type": "image",
+			"url": "assets/zh.jpeg"
+		},
+		{
+			"name": "zb_jpeg",
+			"type": "image",
+			"url": "assets/zb.jpeg"
+		},
+		{
+			"name": "sb_jpeg",
+			"type": "image",
+			"url": "assets/sb.jpeg"
+		},
+		{
+			"name": "triangle_jpeg",
+			"type": "image",
+			"url": "assets/triangle.jpeg"
+		},
+		{
+			"name": "button_jpeg",
+			"type": "image",
+			"url": "assets/button.jpeg"
+		},
+		{
+			"name": "button2_jpeg",
+			"type": "image",
+			"url": "assets/button.jpeg"
+		},
+		{
+			"name": "sb2_jpeg",
+			"type": "image",
+			"url": "assets/sb.jpeg"
+		},
+		{
+			"name": "triangle2_jpeg",
+			"type": "image",
+			"url": "assets/triangle.jpeg"
+		},
+		{
+			"name": "zb2_jpeg",
+			"type": "image",
+			"url": "assets/zb.jpeg"
+		},
+		{
+			"name": "zh2_jpeg",
+			"type": "image",
+			"url": "assets/zh.jpeg"
 		}
 	]
 }
