@@ -14,12 +14,13 @@
 		"libs/modules/physics/physics.js"
 	],
 	"game": [
+		"bin-debug/Obstacle.js",
 		"bin-debug/BasicBitmap.js",
+		"bin-debug/CircleObstacle.js",
 		"bin-debug/Game.js",
 		"bin-debug/LoadingUI.js",
 		"bin-debug/Main.js",
 		"bin-debug/Net.js",
-		"bin-debug/Obstacle.js",
 		"bin-debug/p2DebugDraw.js",
 		"bin-debug/Platform.js",
 		"bin-debug/Player.js"

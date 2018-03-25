@@ -7,11 +7,12 @@ class Obstacle extends egret.Sprite {
     outline : egret.Sprite;
     outlineColor : number;
 
-    public shape : p2.Shape = null;
+    protected customMask : egret.Shape = null;
+
     public body : p2.Body = null;
     public world : p2.World;
     
-    public constructor(world : p2.World, path:string, rect:egret.Rectangle, outlineColor:number) {
+    public constructor(world : p2.World, path:string, rect:egret.Rectangle, outlineColor:number, createShape:boolean = true) {
         super();
         this.world = world;
 
@@ -22,20 +23,26 @@ class Obstacle extends egret.Sprite {
 
         this.addChild(this.main);
         this.addChild(this.outline);
+        
+        this.addEventListener(egret.Event.ENTER_FRAME, this.drawOutline, this);
 
-        if (this.shape == null && this.body == null)
+        if (createShape)
+            this.createShape();
+    }
+
+    public createShape()
+    {
+        if (this.body == null)
         {
-            this.shape = new p2.Box({width: rect.width, height: rect.height});
+            var shape : p2.Shape = new p2.Box({width: this.rect.width, height: this.rect.height});
             this.body = new p2.Body();
-            this.body.position = [rect.x + rect.width / 2, rect.y + rect.height / 2];
+            this.body.position = [this.rect.x + this.rect.width / 2, this.rect.y + this.rect.height / 2];
             this.body.type = p2.Body.STATIC;
 
-            this.body.addShape(this.shape);
+            this.body.addShape(shape);
             
             this.world.addBody(this.body);
         }
-        
-        this.addEventListener(egret.Event.ENTER_FRAME, this.drawOutline, this);
     }
 
     public drawOutline()
