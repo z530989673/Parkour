@@ -24,7 +24,7 @@ class Obstacle extends egret.Sprite {
         this.addChild(this.main);
         this.addChild(this.outline);
         
-        this.addEventListener(egret.Event.ENTER_FRAME, this.drawOutline, this);
+        //this.addEventListener(egret.Event.ENTER_FRAME, this.drawOutline, this);
 
         if (createShape)
             this.createShape();

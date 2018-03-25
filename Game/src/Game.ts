@@ -46,7 +46,7 @@ class Game
     public update() : void{
         this.followPlayer();
         this.world.step(33 / 1000);
-        this.debugDraw.drawDebug();
+        //this.debugDraw.drawDebug();
         this.player.update();
     }
 
@@ -63,7 +63,7 @@ class Game
 
     private createWorld(): void {
         var wrd: p2.World = new p2.World();
-        //wrd.sleepMode = p2.World.BODY_SLEEPING;
+        wrd.sleepMode = p2.World.BODY_SLEEPING;
         wrd.gravity = [0, 500];
         this.world = wrd;
     }
@@ -91,12 +91,12 @@ class Game
 
         var triangleShape: p2.Convex = new p2.Convex({vertices:vertices});
 
-        for(var i = 0; i < 50; i++)
+        for(var i = 0; i < 100; i++)
         {
-            pivotX = 1500 + 150 * i;
+            pivotX = 1500 + 250 * i;
             pivotY = stageHeight-50;
             var vertices1:number[][] = 
-            [
+            [ 
                 [0,     -80],
                 [100,  0],
                 [-100, 0]
@@ -106,7 +106,7 @@ class Game
             this.mainLayer.addChild(triObs1);
         }
         
-        for(var i = 0; i < 20; i++)
+        for(var i = 0; i < 40; i++)
         {
             var obs2 = new Obstacle(this.world, 'bg_jpg',new egret.Rectangle(0 + i * 500,stageHeight - 50,500,200),0x000000);
             this.mainLayer.addChild(obs2);
