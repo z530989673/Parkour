@@ -58,14 +58,8 @@ class ConvexObstacle extends Obstacle
         
         graphic.lineStyle(5, this.outlineColor);        
         var lastIdx = this.vertices.length - 1;
-        this.customMask.graphics.beginFill(this.outlineColor);
-        this.customMask.graphics.moveTo(0,800);
-        this.customMask.graphics.lineTo(100,900);
-        this.customMask.graphics.lineTo(200,1000);
-        this.customMask.graphics.endFill();
-        // this.customMask.graphics.moveTo(this.vertices[lastIdx][0],this.vertices[lastIdx][1]);
-        // for(var i = 0; i < this.vertices.length; i++)
-        //     this.customMask.graphics.lineTo(this.vertices[i][0],this.vertices[i][1]);
-        // this.customMask.graphics.endFill();
+        graphic.moveTo(this.vertices[lastIdx][0],this.vertices[lastIdx][1]);
+        for(var i = 0; i < this.vertices.length; i++)
+            graphic.lineTo(this.vertices[i][0],this.vertices[i][1]);
     }
 }
