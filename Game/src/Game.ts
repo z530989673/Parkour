@@ -82,11 +82,11 @@ class Game
         var pivotY = stageHeight-50;
         var vertices:number[][] = 
         [
-            [pivotX + 0,    pivotY +  -200],
-            [pivotX + 200,  pivotY +  0],
-            [pivotX + -200, pivotY +  0]
+            [0,    -200],
+            [200,  0],
+            [-200, 0]
         ];
-        var triObs = new ConvexObstacle(this.world, 'bg_jpg',vertices,0x000000);
+        var triObs = new ConvexObstacle(this.world, 'bg_jpg', vertices, pivotX, pivotY, 0x000000);
         this.mainLayer.addChild(triObs);
 
         var triangleShape: p2.Convex = new p2.Convex({vertices:vertices});
@@ -95,12 +95,12 @@ class Game
         pivotY = stageHeight-50;
         var vertices1:number[][] = 
         [
-            [pivotX + 0,    pivotY +  -500],
-            [pivotX + 400,  pivotY +  0],
-            [pivotX + -400, pivotY +  0]
+            [0,     -500],
+            [400,  0],
+            [-400, 0]
         ];
 
-        var triObs1 = new ConvexObstacle(this.world, 'bg_jpg',vertices1,0x000000);
+        var triObs1 = new ConvexObstacle(this.world, 'bg_jpg', vertices1, pivotX, pivotY, 0x000000);
         this.mainLayer.addChild(triObs1);
         
         var groundBody: p2.Body = this.groundBody = new p2.Body();
