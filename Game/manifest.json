@@ -20,7 +20,6 @@
 		"bin-debug/Main.js",
 		"bin-debug/Obstacle.js",
 		"bin-debug/p2DebugDraw.js",
-		"bin-debug/Platform.js",
-		"bin-debug/Player.js"
+		"bin-debug/Platform.js"
 	]
 }

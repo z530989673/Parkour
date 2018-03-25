@@ -117,19 +117,11 @@ class Game
     
     private createUI(): void {
         var baseUI:egret.DisplayObjectContainer = this.baseUI = new egret.DisplayObjectContainer();
-        var jumpButton:egret.Bitmap = this.jumpButton = new egret.Bitmap();
-        jumpButton.texture = RES.getRes('button_1_png');
-        jumpButton.width = 200;
-        jumpButton.height = 200;
-        jumpButton.x = 100;
-        jumpButton.y = 500;
-        jumpButton.touchEnabled = true;
-        jumpButton.pixelHitTest = true;
-        jumpButton.addEventListener(egret.TouchEvent.TOUCH_BEGIN, this.jump, this);
-        jumpButton.addEventListener(egret.TouchEvent.TOUCH_END, this.jumpEnd, this);
         baseUI.addChild(jumpButton);
         this.main.stage.addChild(baseUI);
     }
+
+   
 
     public jump(e:egret.TouchEvent):void{
         this.player.jump(e);

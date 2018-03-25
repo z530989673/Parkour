@@ -32,12 +32,12 @@ class Main extends egret.DisplayObjectContainer {
     private circleBody: p2.Body;
     private groundBody: p2.Body;
     private baseUI: egret.DisplayObjectContainer;
-
     public game:Game;
 
     public constructor() {
         super();
         this.once(egret.Event.ADDED_TO_STAGE, this.onAddToStage, this);
+        Net.instance.connectToServer();
         this.game = new Game(this);
     }
     private onAddToStage(): void {
