@@ -78,37 +78,39 @@ class Game
         
         var groundShape: p2.Shape = new p2.Box({width: 5000, height: 100});
         var stageHeight: number = egret.MainContext.instance.stage.stageHeight;
-        var pivotX = 500;
-        var pivotY = stageHeight-50;
+        var pivotX = 300;
+        var pivotY = stageHeight;
         var vertices:number[][] = 
         [
-            [0,    -200],
-            [200,  0],
-            [-200, 0]
+            [0, -50],
+            [200,-250],
+            [400,-50],
         ];
         var triObs = new ConvexObstacle(this.world, 'bg_jpg', vertices, pivotX, pivotY, 0x000000);
         this.mainLayer.addChild(triObs);
 
         var triangleShape: p2.Convex = new p2.Convex({vertices:vertices});
 
-        pivotX = 1500;
-        pivotY = stageHeight-50;
-        var vertices1:number[][] = 
-        [
-            [0,     -500],
-            [400,  0],
-            [-400, 0]
-        ];
+        for(var i = 0; i < 50; i++)
+        {
+            pivotX = 1500 + 150 * i;
+            pivotY = stageHeight-50;
+            var vertices1:number[][] = 
+            [
+                [0,     -80],
+                [100,  0],
+                [-100, 0]
+            ];
 
-        var triObs1 = new ConvexObstacle(this.world, 'bg_jpg', vertices1, pivotX, pivotY, 0x000000);
-        this.mainLayer.addChild(triObs1);
+            var triObs1 = new ConvexObstacle(this.world, 'bg_jpg', vertices1, pivotX, pivotY, 0x000000);
+            this.mainLayer.addChild(triObs1);
+        }
         
-        var groundBody: p2.Body = this.groundBody = new p2.Body();
-        groundBody.position = [0, stageHeight];
-        groundBody.type = p2.Body.STATIC;
-        groundBody.addShape(groundShape);
-
-        this.world.addBody(groundBody);
+        for(var i = 0; i < 20; i++)
+        {
+            var obs2 = new Obstacle(this.world, 'bg_jpg',new egret.Rectangle(0 + i * 500,stageHeight - 50,500,200),0x000000);
+            this.mainLayer.addChild(obs2);
+        }
     }
 
     private createDebug(): void {
