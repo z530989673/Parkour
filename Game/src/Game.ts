@@ -44,10 +44,10 @@ class Game
     }
 
     public update() : void{
+        this.followPlayer();
         this.world.step(33 / 1000);
         this.debugDraw.drawDebug();
         this.player.update();
-        this.followPlayer();
     }
 
     public followPlayer() : void{

@@ -24,6 +24,7 @@ class ConvexObstacle extends Obstacle
         
         this.customMask = new egret.Shape;
         
+        this.customMask.graphics.clear();
         var lastIdx = vertices.length - 1;
         this.customMask.graphics.beginFill(this.outlineColor);
         this.customMask.graphics.moveTo(vertices[lastIdx][0],vertices[lastIdx][1]);

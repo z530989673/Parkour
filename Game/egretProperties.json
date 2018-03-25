@@ -40,5 +40,11 @@
       "name": "physics",
       "path": "../3rd/physics/libsrc"
     }
-  ]
+  ],
+  "targets": {
+    "ios": {
+      "appname": "aaa",
+      "packagename": "com.companyname"
+    }
+  }
 }

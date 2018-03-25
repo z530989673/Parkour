@@ -2,3 +2,9 @@
 /Game/bin-debug/*.map
 /Game/bin-debug
 /Game/debug.log
+/Game/bin-release/web/1
+/Game_ios/assets/game
+/Game_ios/egret-libs/include
+/Game_ios/egret-libs
+/Game_ios/ios-template.xcodeproj
+/Game_ios/ios-template
