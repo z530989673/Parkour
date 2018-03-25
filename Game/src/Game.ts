@@ -69,7 +69,7 @@ class Game
     }
 
     private createGround(): void {
-        var obs = new Obstacle('bg_jpg',new egret.Rectangle(1000,500,200,200),0x000000);
+        var obs = new Obstacle(this.world, 'bg_jpg',new egret.Rectangle(1000,500,200,200),0x000000);
         this.mainLayer.addChild(obs);
 
         var stageHeight: number = egret.MainContext.instance.stage.stageHeight;

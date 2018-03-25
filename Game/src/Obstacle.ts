@@ -6,9 +6,14 @@ class Obstacle extends egret.Sprite {
     rect : egret.Rectangle;
     outline : egret.Sprite;
     outlineColor : number;
+
+    public shape : p2.Shape = null;
+    public body : p2.Body = null;
+    public world : p2.World;
     
-    public constructor(path:string, rect:egret.Rectangle, outlineColor:number) {
+    public constructor(world : p2.World, path:string, rect:egret.Rectangle, outlineColor:number) {
         super();
+        this.world = world;
 
         this.rect = rect;
         this.main = new BasicBitmap(path, this.rect);
@@ -17,6 +22,18 @@ class Obstacle extends egret.Sprite {
 
         this.addChild(this.main);
         this.addChild(this.outline);
+
+        if (this.shape == null && this.body == null)
+        {
+            this.shape = new p2.Box({width: rect.width, height: rect.height});
+            this.body = new p2.Body();
+            this.body.position = [rect.x + rect.width / 2, rect.y + rect.height / 2];
+            this.body.type = p2.Body.STATIC;
+
+            this.body.addShape(this.shape);
+            
+            this.world.addBody(this.body);
+        }
         
         this.addEventListener(egret.Event.ENTER_FRAME, this.drawOutline, this);
     }
