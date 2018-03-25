@@ -37,7 +37,7 @@ class Main extends egret.DisplayObjectContainer {
     public constructor() {
         super();
         this.once(egret.Event.ADDED_TO_STAGE, this.onAddToStage, this);
-        Net.instance.connectToServer();
+        //Net.instance.connectToServer();
         this.game = new Game(this);
     }
     private onAddToStage(): void {

@@ -29,14 +29,16 @@
 class p2DebugDraw {
 
     private sprite: egret.Sprite;
+    private game : Game;
     private world: p2.World;
     private COLOR_D_SLEEP: number = 0x999999;
     private COLOR_D_WAKE: number = 0xe5b2b2;
     private COLOR_K: number = 0x7f7fe5;
     private COLOR_S: number = 0x7fe57f;
 
-    public constructor(world: p2.World) {
-        this.world = world;
+    public constructor(game: Game) {
+        this.game = game;
+        this.world = game.world;
     }
     public setSprite(sprite: egret.Sprite) {
         this.sprite = sprite;
@@ -71,12 +73,12 @@ class p2DebugDraw {
         var g: egret.Graphics = this.sprite.graphics;
         g.lineStyle(1, color);
         g.beginFill(color, 0.5);
-        g.drawCircle(b.position[0], b.position[1], shape.radius);
+        g.drawCircle(b.position[0] - this.game.anchorPosX, b.position[1] - this.game.anchorPosY, shape.radius);
 
         var edge: number[] = new Array();
         b.toWorldFrame(edge, [shape.radius, 0]);
-        g.moveTo(b.position[0], b.position[1]);
-        g.lineTo(edge[0], edge[1]);
+        g.moveTo(b.position[0] - this.game.anchorPosX, b.position[1] - this.game.anchorPosY);
+        g.lineTo(edge[0] - this.game.anchorPosX, edge[1] - this.game.anchorPosY);
 
         g.endFill();
     }
@@ -99,19 +101,19 @@ class p2DebugDraw {
         var g: egret.Graphics = this.sprite.graphics;
         g.lineStyle(1, color);
         g.beginFill(color, 0.5);
-        g.drawCircle(a1[0], a1[1], radius);
+        g.drawCircle(a1[0] - this.game.anchorPosX, a1[1] - this.game.anchorPosY, radius);
         g.endFill();
         g.lineStyle(1, color);
         g.beginFill(color, 0.5);
-        g.drawCircle(a2[0], a2[1], radius);
+        g.drawCircle(a2[0] - this.game.anchorPosX, a2[1] - this.game.anchorPosY, radius);
         g.endFill();
 
         g.lineStyle(1, color);
         g.beginFill(color, 0.5);
-        g.moveTo(p1[0], p1[1]);
-        g.lineTo(p2[0], p2[1]);
-        g.lineTo(p3[0], p3[1]);
-        g.lineTo(p4[0], p4[1]);
+        g.moveTo(p1[0] - this.game.anchorPosX, p1[1] - this.game.anchorPosY);
+        g.lineTo(p2[0] - this.game.anchorPosX, p2[1] - this.game.anchorPosY);
+        g.lineTo(p3[0] - this.game.anchorPosX, p3[1] - this.game.anchorPosY);
+        g.lineTo(p4[0] - this.game.anchorPosX, p4[1] - this.game.anchorPosY);
 
         g.endFill();
     }
@@ -128,8 +130,8 @@ class p2DebugDraw {
         var g: egret.Graphics = this.sprite.graphics;
 
         g.lineStyle(1, color);
-        g.moveTo(p1[0], p1[1]);
-        g.lineTo(p2[0], p2[1]);
+        g.moveTo(p1[0] - this.game.anchorPosX, p1[1] - this.game.anchorPosY);
+        g.lineTo(p2[0] - this.game.anchorPosX, p2[1] - this.game.anchorPosY);
 
         g.endFill();
     }
@@ -139,11 +141,11 @@ class p2DebugDraw {
         var g: egret.Graphics = this.sprite.graphics;
         g.lineStyle(1, color);
         g.beginFill(color, 0.5);
-        g.drawCircle(b.position[0], b.position[1], 1);
+        g.drawCircle(b.position[0] - this.game.anchorPosX, b.position[1] - this.game.anchorPosY, 1);
         g.endFill();
 
         g.lineStyle(1, color);
-        g.drawCircle(b.position[0], b.position[1], 5);
+        g.drawCircle(b.position[0] - this.game.anchorPosX, b.position[1] - this.game.anchorPosY, 5);
         g.endFill();
     }
     private drawConvex(shape: p2.Convex, b: p2.Body): void {
@@ -157,11 +159,11 @@ class p2DebugDraw {
         var worldPoint: number[] = new Array();
         b.toWorldFrame(worldPoint, shape.vertices[0]);
         //g.moveTo(worldPoint[0], worldPoint[1]);
-        g.moveTo(b.position[0], b.position[1]);
-        g.lineTo(worldPoint[0], worldPoint[1]);
+        g.moveTo(b.position[0] - this.game.anchorPosX, b.position[1] - this.game.anchorPosY);
+        g.lineTo(worldPoint[0] - this.game.anchorPosX, worldPoint[1] - this.game.anchorPosY);
         for (var i: number = 1; i <= l; i++) {
             b.toWorldFrame(worldPoint, shape.vertices[i % l]);
-            g.lineTo(worldPoint[0], worldPoint[1]);
+            g.lineTo(worldPoint[0] - this.game.anchorPosX, worldPoint[1] - this.game.anchorPosY);
         }
 
 
@@ -177,19 +179,19 @@ class p2DebugDraw {
         var start: number[] = new Array();
         var end: number[] = new Array();
         b.toWorldFrame(start, [-1000, 0]);
-        g.moveTo(start[0], start[1]);
+        g.moveTo(start[0] - this.game.anchorPosX, start[1] - this.game.anchorPosY);
 
         b.toWorldFrame(end, [1000, 0]);
-        g.lineTo(end[0], end[1]);
+        g.lineTo(end[0] - this.game.anchorPosX, end[1] - this.game.anchorPosY);
 
         b.toWorldFrame(end, [1000, -1000]);
-        g.lineTo(end[0], end[1]);
+        g.lineTo(end[0] - this.game.anchorPosX, end[1] - this.game.anchorPosY);
 
         b.toWorldFrame(end, [-1000, -1000]);
-        g.lineTo(end[0], end[1]);
+        g.lineTo(end[0] - this.game.anchorPosX, end[1] - this.game.anchorPosY);
 
         b.toWorldFrame(end, [-1000, -0]);
-        g.lineTo(end[0], end[1]);
+        g.lineTo(end[0] - this.game.anchorPosX, end[1] - this.game.anchorPosY);
 
         g.endFill();
 
