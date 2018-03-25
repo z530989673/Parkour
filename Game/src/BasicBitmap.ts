@@ -48,8 +48,8 @@ class BasicBitmap extends egret.Bitmap {
             vertexSrc,
             fragmentSrc,
             {
-                uvRect: {x : 0.1 * this.texture.textureWidth,
-                        y : 0.5 * this.texture.textureHeight, z : this.width, w : this.height},
+                uvRect: {x : Math.random() * this.texture.textureWidth,
+                        y : Math.random() * this.texture.textureHeight, z : this.width, w : this.height},
                 textureSize: {x : this.texture.textureWidth, y : this.texture.textureHeight}
             }
         );

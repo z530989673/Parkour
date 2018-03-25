@@ -77,34 +77,36 @@ class Game
         var stageHeight: number = egret.MainContext.instance.stage.stageHeight;
         
         var groundShape: p2.Shape = new p2.Box({width: 5000, height: 100});
+        var stageHeight: number = egret.MainContext.instance.stage.stageHeight;
         var pivotX = 500;
-        var pivotY = -50;
+        var pivotY = stageHeight-50;
         var vertices:number[][] = 
         [
             [pivotX + 0,    pivotY +  -200],
             [pivotX + 200,  pivotY +  0],
             [pivotX + -200, pivotY +  0]
         ];
+        var triObs = new ConvexObstacle(this.world, 'bg_jpg',vertices,0x000000);
+        this.mainLayer.addChild(triObs);
 
         var triangleShape: p2.Convex = new p2.Convex({vertices:vertices});
 
         pivotX = 1500;
-        pivotY = -50;
-        var vertices:number[][] = 
+        pivotY = stageHeight-50;
+        var vertices1:number[][] = 
         [
             [pivotX + 0,    pivotY +  -500],
             [pivotX + 400,  pivotY +  0],
             [pivotX + -400, pivotY +  0]
         ];
 
-        var triangleShape2: p2.Convex = new p2.Convex({vertices:vertices});
+        var triObs1 = new ConvexObstacle(this.world, 'bg_jpg',vertices1,0x000000);
+        this.mainLayer.addChild(triObs1);
         
         var groundBody: p2.Body = this.groundBody = new p2.Body();
         groundBody.position = [0, stageHeight];
         groundBody.type = p2.Body.STATIC;
         groundBody.addShape(groundShape);
-        groundBody.addShape(triangleShape);
-        groundBody.addShape(triangleShape2);
 
         this.world.addBody(groundBody);
     }
