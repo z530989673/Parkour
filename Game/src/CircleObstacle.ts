@@ -14,14 +14,14 @@ class CircleObstacle extends Obstacle
         this.r = r;
         this.createShape();
         
-        this.customMask = new egret.Shape;
-        this.customMask.graphics.clear();
-        this.customMask.graphics.beginFill(this.outlineColor);
-        this.customMask.graphics.drawCircle(this.posX,this.posY,this.r);
-        this.customMask.graphics.endFill();
-        this.addChild( this.customMask );
+        // this.customMask = new egret.Shape;
+        // this.customMask.graphics.clear();
+        // this.customMask.graphics.beginFill(this.outlineColor);
+        // this.customMask.graphics.drawCircle(this.posX,this.posY,this.r);
+        // this.customMask.graphics.endFill();
+        // this.addChild( this.customMask );
 
-        this.mask = this.customMask;
+        // this.mask = this.customMask;
 
     }
 
