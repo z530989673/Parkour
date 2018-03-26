@@ -68,6 +68,28 @@ class Main extends egret.DisplayObjectContainer {
 
     private onGroupComplete()
     {
-        this.room.init();
+        this.initializeAsync();
+        egretfb.EgretFBInstant.startGameAsync().then(() => {
+            this.room.init();
+            egret.log("start game");
+        });
+        //this.game.init();
+        //this.addEventListener(egret.Event.ENTER_FRAME, this.update, this);
+    }
+
+    private initializeAsync(): void {
+        egretfb.EgretFBInstant.initializeAsync().then(function () {
+            egret.log("getLocale:", egretfb.EgretFBInstant.getLocale());
+            egret.log("getPlatform:", egretfb.EgretFBInstant.getPlatform());
+            egret.log("getSDKVersion", egretfb.EgretFBInstant.getSDKVersion());
+            egret.log("getSupportedAPIs", egretfb.EgretFBInstant.getSupportedAPIs());
+            egret.log("getEntryPointData", egretfb.EgretFBInstant.getEntryPointData());
+        })
+        setTimeout(function () {
+            egretfb.EgretFBInstant.setLoadingProgress(100);
+        }, 1000);
+    }
+    private update(): void {
+        this.game.update();
     }
 }
