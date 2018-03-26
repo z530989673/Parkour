@@ -26,18 +26,18 @@ class ConvexObstacle extends Obstacle
 
         this.createShape();
         
-        this.customMask = new egret.Shape;
+        // this.customMask = new egret.Shape;
         
-        this.customMask.graphics.clear();
-        var lastIdx = vertices.length - 1;
-        this.customMask.graphics.beginFill(this.outlineColor);
-        this.customMask.graphics.moveTo(vertices[lastIdx][0] + this.posX,vertices[lastIdx][1] + this.posY);
-        for(var i = 0; i < vertices.length; i++)
-            this.customMask.graphics.lineTo(vertices[i][0] + this.posX,vertices[i][1] + this.posY);
-        this.customMask.graphics.endFill();
-        this.addChild( this.customMask );
+        // this.customMask.graphics.clear();
+        // var lastIdx = vertices.length - 1;
+        // this.customMask.graphics.beginFill(this.outlineColor);
+        // this.customMask.graphics.moveTo(vertices[lastIdx][0] + this.posX,vertices[lastIdx][1] + this.posY);
+        // for(var i = 0; i < vertices.length; i++)
+        //     this.customMask.graphics.lineTo(vertices[i][0] + this.posX,vertices[i][1] + this.posY);
+        // this.customMask.graphics.endFill();
+        // this.addChild( this.customMask );
 
-        this.mask = this.customMask;
+        // this.mask = this.customMask;
 
     }
 

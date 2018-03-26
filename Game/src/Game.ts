@@ -91,7 +91,7 @@ class Game
 
         var triangleShape: p2.Convex = new p2.Convex({vertices:vertices});
 
-        for(var i = 0; i < 100; i++)
+        for(var i = 0; i < 300; i++)
         {
             pivotX = 1500 + 250 * i;
             pivotY = stageHeight-50;
@@ -106,7 +106,7 @@ class Game
             this.mainLayer.addChild(triObs1);
         }
         
-        for(var i = 0; i < 40; i++)
+        for(var i = 0; i < 100; i++)
         {
             var obs2 = new Obstacle(this.world, 'bg_jpg',new egret.Rectangle(0 + i * 500,stageHeight - 50,500,200),0x000000);
             this.mainLayer.addChild(obs2);
