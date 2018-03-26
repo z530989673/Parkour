@@ -31,11 +31,14 @@ class Main extends egret.DisplayObjectContainer {
     public room:Room;
     //游戏主界面
     public game:Game;
+    //网络
+    public net:Net;
 
     public constructor() {
         super();
         this.once(egret.Event.ADDED_TO_STAGE, this.onAddToStage, this);
-        //Net.instance.connectToServer();
+        this.net = new Net(this);
+        this.net.connectToServer();
         this.room = new Room(this);
         this.game = new Game(this);
     }
@@ -65,12 +68,6 @@ class Main extends egret.DisplayObjectContainer {
 
     private onGroupComplete()
     {
-        //this.room.init();
-        this.game.init();
-        this.addEventListener(egret.Event.ENTER_FRAME, this.update, this);
-    }
-
-    private update(): void {
-        this.game.update();
+        this.room.init();
     }
 }

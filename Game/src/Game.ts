@@ -12,19 +12,21 @@ class Game
     public marginY = 300;
     private main:Main;
 
+    public playerArray : Array<Character>;
     public backgroundLayer : egret.Sprite;
     public mainLayer : egret.Sprite;
     private baseUI: egret.DisplayObjectContainer;
     private jumpButton : egret.Bitmap;
     
     private groundBody: p2.Body;
-    private player : Player;
+    public player : Player;
 
     public constructor(main : Main)
     {
         this.main = main;
         this.createWorld();
         this.player = new Player(this);
+        this.playerArray = new Array<Character>();
     }
 
     public init(): void {

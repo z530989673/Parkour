@@ -15,16 +15,17 @@
 	],
 	"game": [
 		"bin-debug/Obstacle.js",
+		"bin-debug/Main.js",
 		"bin-debug/CircleObstacle.js",
 		"bin-debug/ConvexObstacle.js",
 		"bin-debug/Game.js",
 		"bin-debug/LoadingUI.js",
-		"bin-debug/Main.js",
-		"bin-debug/Room.js",
+		"bin-debug/Character.js",
+		"bin-debug/Net.js",
 		"bin-debug/BasicBitmap.js",
 		"bin-debug/p2DebugDraw.js",
 		"bin-debug/Platform.js",
 		"bin-debug/Player.js",
-		"bin-debug/Net.js"
+		"bin-debug/Room.js"
 	]
 }

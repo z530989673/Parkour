@@ -1,7 +1,7 @@
 {
 	"groups": [
 		{
-			"keys": "bg_jpg,egret_icon_png,description_json,button_1_png,button_2_png,zh_jpeg,zb_jpeg,sb_jpeg,triangle_jpeg,button_jpeg,button2_jpeg,sb2_jpeg,triangle2_jpeg,zb2_jpeg,zh2_jpeg",
+			"keys": "bg_jpg,egret_icon_png,description_json,button_1_png,button_2_png,zh_jpeg,zb_jpeg,sb_jpeg,triangle_jpeg,button_jpeg,button2_jpeg,sb2_jpeg,triangle2_jpeg,zb2_jpeg,zh2_jpeg,add_jpeg",
 			"name": "preload"
 		}
 	],
@@ -80,6 +80,11 @@
 			"name": "zh2_jpeg",
 			"type": "image",
 			"url": "assets/zh.jpeg"
+		},
+		{
+			"name": "add_jpeg",
+			"type": "image",
+			"url": "assets/add.jpeg"
 		}
 	]
 }

@@ -10,6 +10,7 @@ class Player
     private jumpTwice : boolean = false;
     private onGround : boolean = true;
 
+    public character : Character;
     public originPosX : number;
     public originPosY : number;
     
@@ -35,6 +36,7 @@ class Player
         this.world = this.game.world;
         this.world.on("beginContact", this.onBeginContact, this);
         this.world.on("endContact", this.onEndContact, this);
+        this.character = new Character();
         this.createBody();
     }
 
